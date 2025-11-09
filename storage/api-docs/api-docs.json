@@ -1,0 +1,251 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "OMPAY API",
+        "description": "API pour la gestion des comptes OMPAY",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Serveur de développement"
+        }
+    ],
+    "paths": {
+        "/api/v1/comptes": {
+            "post": {
+                "tags": [
+                    "Comptes"
+                ],
+                "summary": "Créer un nouveau compte",
+                "description": "Crée un nouveau compte bancaire pour un client. Si le client n'existe pas, il sera créé automatiquement.",
+                "operationId": "createCompte",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "client",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "client": {
+                                        "description": "Informations du client",
+                                        "properties": {
+                                            "nom": {
+                                                "description": "Nom du client",
+                                                "type": "string",
+                                                "example": "Doe"
+                                            },
+                                            "prenom": {
+                                                "description": "Prénom du client",
+                                                "type": "string",
+                                                "example": "John"
+                                            },
+                                            "adresse": {
+                                                "description": "Adresse du client",
+                                                "type": "string",
+                                                "example": "123 Main St"
+                                            },
+                                            "telephone": {
+                                                "description": "Numéro de téléphone",
+                                                "type": "string",
+                                                "example": "771234567"
+                                            },
+                                            "cni": {
+                                                "description": "Numéro CNI",
+                                                "type": "string",
+                                                "example": "1234567890123"
+                                            },
+                                            "code_secret": {
+                                                "description": "Code secret",
+                                                "type": "string",
+                                                "example": "1234"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "type": {
+                                        "description": "Type de compte",
+                                        "type": "string",
+                                        "enum": [
+                                            "client",
+                                            "distributeur"
+                                        ],
+                                        "example": "client"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Compte créé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "compte creer avec succes"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID unique du compte",
+                                                    "type": "string",
+                                                    "example": "uuid"
+                                                },
+                                                "numeroCompte": {
+                                                    "description": "Numéro du compte",
+                                                    "type": "string",
+                                                    "example": "123456789"
+                                                },
+                                                "titulaire": {
+                                                    "description": "Nom complet du titulaire",
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "telephone": {
+                                                    "description": "Téléphone du client",
+                                                    "type": "string",
+                                                    "example": "771234567"
+                                                },
+                                                "cni": {
+                                                    "description": "CNI du client",
+                                                    "type": "string",
+                                                    "example": "1234567890123"
+                                                },
+                                                "type": {
+                                                    "description": "Type de compte",
+                                                    "type": "string",
+                                                    "example": "client"
+                                                },
+                                                "solde": {
+                                                    "description": "Solde du compte",
+                                                    "type": "number",
+                                                    "example": 0
+                                                },
+                                                "statut": {
+                                                    "description": "Statut du compte",
+                                                    "type": "string",
+                                                    "example": "actif"
+                                                },
+                                                "devise": {
+                                                    "description": "Devise",
+                                                    "type": "string",
+                                                    "example": "FCFA"
+                                                },
+                                                "plafond": {
+                                                    "description": "Plafond activé",
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "dateCreation": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-11-09T10:00:00.000000Z"
+                                                },
+                                                "metadata": {
+                                                    "properties": {
+                                                        "derniereModification": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        },
+                                                        "version": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erreur de validation"
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "client.nom": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Le nom est obligatoire."
+                                                    }
+                                                },
+                                                "client.telephone": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Le téléphone est invalide."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Erreur serveur"
+                                        },
+                                        "errors": {
+                                            "type": "string",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Comptes",
+            "description": "Comptes"
+        }
+    ]
+}

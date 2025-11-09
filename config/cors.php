@@ -14,12 +14,13 @@ return [
     | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     |
     */
+    // configurition de mon cors;
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/v1/*', 'sanctum/csrf-cookie'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => ['POST',"GET","PUT","DELETE","PATCH","OPTIONS"],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['http://localhost:8000', 'http://127.0.0.1:8000', "https://amycolle-ompay.onrender.com"],
 
     'allowed_origins_patterns' => [],
 
