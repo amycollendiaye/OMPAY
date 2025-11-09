@@ -20,3 +20,24 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post("/comptes",[CompteController::class,'store']);
 
+// Swagger Documentation Routes
+Route::get('/docs', function () {
+    return view('vendor.l5-swagger.index', [
+        'documentation' => 'default',
+        'urlToDocs' => route('l5-swagger.default.api'),
+        'operationsSorter' => 'alpha',
+        'configUrl' => route('l5-swagger.default.api'),
+        'validatorUrl' => '',
+    ]);
+})->name('swagger.local');
+
+Route::get('/docs/production', function () {
+    return view('vendor.l5-swagger.index', [
+        'documentation' => 'production',
+        'urlToDocs' => route('l5-swagger.production.api'),
+        'operationsSorter' => 'alpha',
+        'configUrl' => route('l5-swagger.production.api'),
+        'validatorUrl' => '',
+    ]);
+})->name('swagger.production');
+
