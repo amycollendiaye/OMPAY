@@ -18,8 +18,8 @@ use PhpParser\Node\Stmt\Return_;
  * )
  *
  * @OA\Server(
- *     url="http://localhost:8000",
- *     description="Serveur de développement"
+ *     url="https://amycolle-ompay.onrender.com",
+ *     description="Serveur de production"
  * )
  */
 class CompteController extends Controller
