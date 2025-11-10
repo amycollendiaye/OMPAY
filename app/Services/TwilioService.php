@@ -12,13 +12,13 @@ class TwilioService
 
     public function __construct()
     {
-        $sid = 'ACff924bef2ad9209f4a98ef65ede8da04';
-        $token = 'f08a9193fa1cd4a5b5e465d4ec09405f';
-        $this->from ="+19124205653";
+        $sid = config('services.twilio.sid');
+        $token = config('services.twilio.token');
+        $this->from = config('services.twilio.from');
 
-        // Log::info('TWILIO_SID: ' . $sid);
-        // Log::info('TWILIO_TOKEN: ' . $token);
-        // Log::info('TWILIO_FROM: ' . $this->from);
+        Log::info('TWILIO_SID: ' . $sid);
+        Log::info('TWILIO_TOKEN: ' . $token);
+        Log::info('TWILIO_FROM: ' . $this->from);
 
         // Vérifier que les credentials sont définis
         if (empty($sid) || empty($token)) {
