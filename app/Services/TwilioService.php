@@ -16,9 +16,9 @@ class TwilioService
         $token = config('services.twilio.token');
         $this->from = config('services.twilio.from');
 
-        Log::info('TWILIO_SID: ' . $sid);
-        Log::info('TWILIO_TOKEN: ' . $token);
-        Log::info('TWILIO_FROM: ' . $this->from);
+        // Log::info('TWILIO_SID: ' . $sid);
+        // Log::info('TWILIO_TOKEN: ' . $token);
+        // Log::info('TWILIO_FROM: ' . $this->from);
 
         // Vérifier que les credentials sont définis
         if (empty($sid) || empty($token)) {
