@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(IRepositoryClient::class, ClientRepository::class);
         $this->app->bind(IRepositoryCompte::class, CompteRepository::class);
-            $this->app->singleton(DestinataireCompte::class);IRepositoryCompte:
+            $this->app->singleton(DestinataireCompte::class);
 
     }
 

@@ -24,7 +24,7 @@ class CompteService
 public function create(array $data)
 {
     return DB::transaction(function () use ($data) {
-        // 1️⃣ Rechercher ou créer le client
+        // Rechercher ou créer le client
         $client = $this->repoClient->findByTelephone($data['client']['telephone']);
         if (!$client) {
             Log::info('Création d’un nouveau client', $data['client']);
@@ -45,7 +45,7 @@ public function create(array $data)
             }
         }
 
-        // 2️⃣ Créer le compte pour le client
+        //  Créer le compte pour le client
         Log::info('Création d’un nouveau compte pour le client.');
 
         $compte = $this->repoCompte->create([
