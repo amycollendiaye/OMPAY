@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Routes d'authentification
+Route::middleware('auth:api')->get('/me', [AuthController::class, 'me']);
+
 Route::post('/auth', [AuthController::class, 'login']);
 Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
 Route::middleware('auth:api')->get('/profile', [AuthController::class, 'profile']);
@@ -39,5 +41,10 @@ Route::middleware('auth:api')->group(function () {
 
     // Paiement vers un client ou distributeur
     Route::post('transactions/pay', [TransactionPayementControlle::class, 'paiement']);
+
+    // Solde du client connecté
+
+    // Solde d'un compte spécifique
+    Route::get('comptes/{numero}/solde', [CompteController::class, 'getSolde']);
 });
 

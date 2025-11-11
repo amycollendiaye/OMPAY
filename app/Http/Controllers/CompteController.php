@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCompte;
 use App\Http\Resources\CompteRessource;
+use App\Models\Compte;
 use App\Services\CompteService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -27,6 +28,10 @@ use PhpParser\Node\Stmt\Return_;
  *     type="http",
  *     scheme="bearer",
  *     bearerFormat="JWT"
+ * )
+ *
+ * @OA\Security(
+ *     {"bearerAuth": {}}
  * )
  */
 class CompteController extends Controller
@@ -139,4 +144,111 @@ class CompteController extends Controller
         }
 
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/v1/comptes/{numero}/solde",
+     *     tags={"Comptes"},
+     *     summary="Afficher le solde d’un compte",
+     *     description="Retourne le solde actuel d’un compte à partir de son numéro de compte.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="numero",
+     *         in="path",
+     *         required=true,
+     *         description="Numéro du compte (ex: OMPAY-732281)",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Solde du compte récupéré avec succès",
+     *         @OA\JsonContent(
+     *             example={
+     *                 "status": "success",
+     *                 "compte": {
+     *                     "numero_compte": "OMPAY-732281",
+     *                     "type": "client",
+     *                     "solde": 10000
+     *                 }
+     *             }
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Compte non trouvé",
+     *         @OA\JsonContent(
+     *             example={"status": "error", "message": "Compte non trouvé."}
+     *         )
+     *     )
+     * )
+     */
+    public function getSolde($numero)
+{
+    // Récupérer le compte demandé
+    $compte = Compte::where('numero_compte', $numero)->first();
+
+    if (!$compte) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Compte non trouvé.'
+        ], 404);
+    }
+
+    // Vérifier si l'utilisateur connecté peut voir ce compte
+    $this->authorize('showSolde', $compte);
+
+    return response()->json([
+        'status' => 'success',
+        'compte' => [
+            'numero_compte' => $compte->numero_compte,
+            'type' => $compte->type,
+            'solde' => $compte->solde,
+        ]
+    ]);
 }
+
+    /**
+     * @OA\Get(
+     *     path="/api/v1/solde",
+     *     tags={"Comptes"},
+     *     summary="Afficher le solde du client connecté",
+     *     description="Retourne le solde du compte du client authentifié.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Solde récupéré avec succès",
+     *         @OA\JsonContent(
+     *             example={
+     *                 "status": "success",
+     *                 "solde": 10000
+     *             }
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non autorisé",
+     *         @OA\JsonContent(
+     *             example={"status": "error", "message": "Unauthenticated."}
+     *         )
+     *     )
+     * )
+     */
+    public function getMySolde()
+    {
+        $compte = auth()->user()->compte;
+
+        if (!$compte) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Aucun compte trouvé.'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'solde' => $compte->solde,
+        ]);
+    }
+}
+
+

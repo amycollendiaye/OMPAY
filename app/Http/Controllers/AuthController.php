@@ -75,22 +75,119 @@ class AuthController extends Controller
             return $this->errorResponse("desole  mais vous n'est pas autorisé!!!!", 401);
         }
 
-        $token = $client->createToken('API Token')->accessToken;
+        $accessToken = $client->createToken('access_token', ['access'])->accessToken;
+        $refreshToken = $client->createToken('refresh_token', ['refresh'])->accessToken;
 
-        return response()->json([
-            'token' => $token,
-            'user' => [
-                "nom" => $client->nom,
-                "prenom" =>  $client->prenom,
-                "nin" =>   $client->nin,
-                "adresse" => $client->adresse,
-                "qr_code" =>  $client->qr_code,
+        return $this->successResponse("connnexion reussi", [
+            'token' => $accessToken,
+
+            'refresh' => $refreshToken,
+            'expires_in' => 900,
 
 
-
-            ]
-        ]);
+        ], 200);
     }
+    /**
+     * @OA\Get(
+     *     path="/api/v1/me",
+     *     summary="Récupérer les informations de l'utilisateur connecté",
+     *     description="Retourne les informations de l'utilisateur authentifié",
+     *     operationId="me",
+     *     tags={"Authentification"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Informations de l'utilisateur, compte, solde et transactions",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", example="success"),
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="string", example="uuid", description="ID du client"),
+     *                 @OA\Property(property="nom", type="string", example="Doe", description="Nom du client"),
+     *                 @OA\Property(property="prenom", type="string", example="John", description="Prénom du client"),
+     *                 @OA\Property(property="telephone", type="string", example="776598037", description="Téléphone"),
+     *                 @OA\Property(property="cni", type="string", example="1234567890123", description="CNI"),
+     *                 @OA\Property(property="adresse", type="string", example="123 Main St", description="Adresse"),
+     *                 @OA\Property(property="qr_code", type="string", example="path/to/qr.png", description="QR Code"),
+     *                 @OA\Property(property="password", type="string", description="Mot de passe (hashé)"),
+     *                 @OA\Property(property="must_change_password", type="boolean", example=false, description="Doit changer le mot de passe")
+     *             ),
+     *             @OA\Property(
+     *                 property="compte",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="string", example="uuid", description="ID du compte"),
+     *                 @OA\Property(property="numero_compte", type="string", example="123456789", description="Numéro de compte"),
+     *                 @OA\Property(property="type", type="string", example="courant", description="Type de compte"),
+     *                 @OA\Property(property="statut", type="string", example="actif", description="Statut du compte"),
+     *                 @OA\Property(property="date_creation", type="string", format="date", example="2023-01-01", description="Date de création"),
+     *                 @OA\Property(property="plafond", type="number", example=100000, description="Plafond du compte")
+     *             ),
+     *             @OA\Property(property="solde", type="number", example=15000, description="Solde actuel du compte"),
+     *             @OA\Property(
+     *                 property="transactions",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="string", example="uuid", description="ID de la transaction"),
+     *                     @OA\Property(property="type", type="string", example="transfert", description="Type de transaction"),
+     *                     @OA\Property(property="montant", type="number", example=5000, description="Montant de la transaction"),
+     *                     @OA\Property(property="date_transaction", type="string", format="date-time", example="2023-01-01T12:00:00Z", description="Date de la transaction"),
+     *                     @OA\Property(property="numero_reference", type="string", example="REF123", description="Numéro de référence"),
+     *                     @OA\Property(property="code_marchand", type="string", example="MARCHAND001", description="Code marchand")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Token invalide",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
+   public function me(Request $request)
+{
+    $user = $request->user();
+    $user->load(['compte.transactions']); // Charge le compte et ses transactions
+
+    $compte = $user->compte;
+
+    return response()->json([
+        'status' => 'success',
+        'user' => [
+            'id' => $user->id,
+            'nom' => $user->nom,
+            'prenom' => $user->prenom ?? null,
+            'cni' => $user->cni ?? null,
+            'telephone' => $user->telephone,
+            'adresse' => $user->adresse ?? null,
+
+            // Infos du compte
+            'compte' => $compte ? [
+                'id' => $compte->id,
+                'numero_compte' => $compte->numero_compte,
+                'solde' => $compte->solde,
+                'type' => $compte->type,
+                'statut' => $compte->statut,
+                'date_creation' => $compte->created_at,
+            ] : null,
+
+            // Infos des transactions associées
+            'transactions' => $compte ? $compte->transactions->map(function ($t) {
+                return [
+                    'id' => $t->id,
+                    'type' => $t->type,
+                    'montant' => $t->montant,
+                    'type' => $t->type,
+                    'referennce' => $t->numero_reference,
+                ];
+            }) : [],
+        ]
+    ]);
+}
 
     /**
      * @OA\Post(
@@ -136,6 +233,4 @@ class AuthController extends Controller
         $request->user()->token()->revoke();
         return response()->json(['message' => 'Logged out']);
     }
-
-
 }

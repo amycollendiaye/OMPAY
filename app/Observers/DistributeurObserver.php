@@ -17,6 +17,16 @@ class DistributeurObserver
         if (empty($distributeur->id)) {
             $distributeur->id = (string) Str::uuid();
         }
+         // Génération du code marchand unique
+        if (empty($distributeur->code_marchand)) {
+            do {
+                $code = 'CM-' . strtoupper(Str::random(6)); // Exemple : CM-AZ3K8D
+            } while (Distributeur::where('code_marchand', $code)->exists());
+
+            $distributeur->code_marchand = $code;
+        }
+
+    
     }
 
     public function created(Distributeur $distributeur): void
@@ -40,7 +50,7 @@ class DistributeurObserver
      */
     public function deleted(Distributeur $distributeur): void
     {
-        //
+        
     }
 
     /**

@@ -140,6 +140,184 @@
                 }
             }
         },
+        "/api/v1/me": {
+            "get": {
+                "tags": [
+                    "Authentification"
+                ],
+                "summary": "Récupérer les informations de l'utilisateur connecté",
+                "description": "Retourne les informations de l'utilisateur authentifié",
+                "operationId": "me",
+                "responses": {
+                    "200": {
+                        "description": "Informations de l'utilisateur, compte, solde et transactions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID du client",
+                                                    "type": "string",
+                                                    "example": "uuid"
+                                                },
+                                                "nom": {
+                                                    "description": "Nom du client",
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "prenom": {
+                                                    "description": "Prénom du client",
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "telephone": {
+                                                    "description": "Téléphone",
+                                                    "type": "string",
+                                                    "example": "776598037"
+                                                },
+                                                "cni": {
+                                                    "description": "CNI",
+                                                    "type": "string",
+                                                    "example": "1234567890123"
+                                                },
+                                                "adresse": {
+                                                    "description": "Adresse",
+                                                    "type": "string",
+                                                    "example": "123 Main St"
+                                                },
+                                                "qr_code": {
+                                                    "description": "QR Code",
+                                                    "type": "string",
+                                                    "example": "path/to/qr.png"
+                                                },
+                                                "password": {
+                                                    "description": "Mot de passe (hashé)",
+                                                    "type": "string"
+                                                },
+                                                "must_change_password": {
+                                                    "description": "Doit changer le mot de passe",
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "compte": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID du compte",
+                                                    "type": "string",
+                                                    "example": "uuid"
+                                                },
+                                                "numero_compte": {
+                                                    "description": "Numéro de compte",
+                                                    "type": "string",
+                                                    "example": "123456789"
+                                                },
+                                                "type": {
+                                                    "description": "Type de compte",
+                                                    "type": "string",
+                                                    "example": "courant"
+                                                },
+                                                "statut": {
+                                                    "description": "Statut du compte",
+                                                    "type": "string",
+                                                    "example": "actif"
+                                                },
+                                                "date_creation": {
+                                                    "description": "Date de création",
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2023-01-01"
+                                                },
+                                                "plafond": {
+                                                    "description": "Plafond du compte",
+                                                    "type": "number",
+                                                    "example": 100000
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "solde": {
+                                            "description": "Solde actuel du compte",
+                                            "type": "number",
+                                            "example": 15000
+                                        },
+                                        "transactions": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "ID de la transaction",
+                                                        "type": "string",
+                                                        "example": "uuid"
+                                                    },
+                                                    "type": {
+                                                        "description": "Type de transaction",
+                                                        "type": "string",
+                                                        "example": "transfert"
+                                                    },
+                                                    "montant": {
+                                                        "description": "Montant de la transaction",
+                                                        "type": "number",
+                                                        "example": 5000
+                                                    },
+                                                    "date_transaction": {
+                                                        "description": "Date de la transaction",
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2023-01-01T12:00:00Z"
+                                                    },
+                                                    "numero_reference": {
+                                                        "description": "Numéro de référence",
+                                                        "type": "string",
+                                                        "example": "REF123"
+                                                    },
+                                                    "code_marchand": {
+                                                        "description": "Code marchand",
+                                                        "type": "string",
+                                                        "example": "MARCHAND001"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/logout": {
             "post": {
                 "tags": [
@@ -418,6 +596,103 @@
                 }
             }
         },
+        "/api/v1/comptes/{numero}/solde": {
+            "get": {
+                "tags": [
+                    "Comptes"
+                ],
+                "summary": "Afficher le solde d’un compte",
+                "description": "Retourne le solde actuel d’un compte à partir de son numéro de compte.",
+                "operationId": "e1e5fbb5e6274c3100707b2eb58a8e52",
+                "parameters": [
+                    {
+                        "name": "numero",
+                        "in": "path",
+                        "description": "Numéro du compte (ex: OMPAY-732281)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Solde du compte récupéré avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "status": "success",
+                                    "compte": {
+                                        "numero_compte": "OMPAY-732281",
+                                        "type": "client",
+                                        "solde": 10000
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Compte non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "status": "error",
+                                    "message": "Compte non trouvé."
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/solde": {
+            "get": {
+                "tags": [
+                    "Comptes"
+                ],
+                "summary": "Afficher le solde du client connecté",
+                "description": "Retourne le solde du compte du client authentifié.",
+                "operationId": "7eaa6d6db50c25e9f1231a95acd267a5",
+                "responses": {
+                    "200": {
+                        "description": "Solde récupéré avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "status": "success",
+                                    "solde": 10000
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non autorisé",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "status": "error",
+                                    "message": "Unauthenticated."
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/transactions": {
             "get": {
                 "tags": [
@@ -571,21 +846,12 @@
                             "schema": {
                                 "required": [
                                     "recipient",
-                                    "type",
                                     "montant"
                                 ],
                                 "properties": {
                                     "recipient": {
-                                        "description": "Numéro de téléphone ou code marchand du destinataire",
+                                        "description": "Numéro de téléphone (commence par 7 ou 8) ou code marchand du destinataire",
                                         "type": "string"
-                                    },
-                                    "type": {
-                                        "description": "Type de destinataire",
-                                        "type": "string",
-                                        "enum": [
-                                            "telephone",
-                                            "code_marchand"
-                                        ]
                                     },
                                     "montant": {
                                         "description": "Montant du paiement",

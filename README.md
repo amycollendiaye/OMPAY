@@ -63,3 +63,22 @@ array:2 [
     "password" => "$2y$12$yCwuDDsQCFoH0MfGJd/eneHZFOiZL5ltcG0C5bjnolbiP6jJ3KyZ2"
     "must_change_password" => true
   ]
+  ## $client->createToken('access_token', ['access'])
+  createToken() est une fonction que Laravel Passport ajoute automatiquement à ton modèle Client
+(parce qu’il utilise le trait HasApiTokens).
+'access_token' → c’est le nom du token, juste pour toi, pour reconnaître son type (ici un token d’accès).
+
+['access'] → ce sont les permissions que tu donnes à ce token.
+
+💬 Exemple :
+Tu peux créer des permissions comme :
+
+['access'] → accès aux endpoints normaux (transactions, profil…)
+
+['refresh'] → accès uniquement pour renouveler un token
+ ## code marchand de teset:CM-HCKIKO"
+
+
+
+## afficher le client amy colle 781030848
+php artisan tinker --execute="\$client = App\Models\Client::where('telephone', '781030848')->first(); if(\$client) { \$client->load('compte'); echo json_encode(\$client->toArray(), JSON_PRETTY_PRINT); } else { echo 'Client not found'; }"

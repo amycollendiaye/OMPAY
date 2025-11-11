@@ -21,7 +21,7 @@ class DistributeurFactory extends Factory
             'telephone' => $this->faker->unique()->phoneNumber(),
             'adresse' => $this->faker->address(),
             'code_secret' => $this->faker->password(4, 4),
-            'code_marchand' => $this->faker->unique()->randomNumber(8),
+            // 'code_marchand' => $this->faker->unique()->randomNumber(8), // Let the observer generate
         ];
     }
 }

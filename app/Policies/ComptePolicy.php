@@ -23,6 +23,11 @@ class ComptePolicy
     {
         return $compte->client_id === $client->id;
     }
+    public function showSolde(Client $client, Compte $compte): bool
+    {
+        return $compte->client_id === $client->id;
+    }
+
     public function viewTransaction(Client $client, Compte $compte): bool
     {
         // vérifier que ce compte appartient au client
@@ -51,24 +56,24 @@ class ComptePolicy
     // }
 
     /**
-     * Determine whether the user can update the model.
-     */
+ * Determine whether the user can update the model.
+ */
     // public function update(Client $client, Compte $compte): bool
     // {
     //     //
     // }
 
     /**
-     * Determine whether the user can delete the model.
-     */
+ * Determine whether the user can delete the model.
+ */
     // public function delete(Client $client, Compte $compte): bool
     // {
     //     //
     // }
 
     /**
-     * Determine whether the user can restore the model.
-     */
+ * Determine whether the user can restore the model.
+ */
     // public function restore(Client $client, Compte $compte): bool
     // {
     //     //

@@ -33,9 +33,8 @@ class TransactionPayementControlle extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"recipient","type","montant"},
-     *             @OA\Property(property="recipient", type="string", description="Numéro de téléphone ou code marchand du destinataire"),
-     *             @OA\Property(property="type", type="string", enum={"telephone", "code_marchand"}, description="Type de destinataire"),
+     *             required={"recipient","montant"},
+     *             @OA\Property(property="recipient", type="string", description="Numéro de téléphone (commence par 7 ou 8) ou code marchand du destinataire"),
      *             @OA\Property(property="montant", type="number", format="float", description="Montant du paiement", minimum=1)
      *         )
      *     ),
@@ -80,9 +79,11 @@ class TransactionPayementControlle extends Controller
     {
         $validated = $request->validate([
             'recipient' => 'required|string',
-            'type' => 'required|in:telephone,code_marchand',
             'montant' => 'required|numeric|min:1',
         ]);
+
+        // Déterminer le type basé sur le destinataire
+        $type = (str_starts_with($validated['recipient'], '7') || str_starts_with($validated['recipient'], '8')) ? 'telephone' : 'code_marchand';
 
         $compte = auth()->user()->compte;
         $this->authorize('pay', $compte);
@@ -91,7 +92,7 @@ class TransactionPayementControlle extends Controller
             $compte,
             $validated['recipient'],
             $validated['montant'],
-            $validated['type']
+            $type
         );
         $transaction = (new TransactionResource($data['transaction']))
             ->additional([
