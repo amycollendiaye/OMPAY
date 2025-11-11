@@ -5,18 +5,19 @@ namespace App\Http\Controllers;
 use App\Services\TransactionPayementService;
 use App\Services\TransactionTransfertService;
 use Illuminate\Http\Request;
-   use App\Http\Resources\TransactionResource;
-
+use App\Http\Resources\TransactionResource;
+use App\Traits\ApiResponse;
 
 /**
  * @OA\Tag(
-  *     name="Paiements",
-  *     description="API pour les paiements vers les clients ou distributeurs"
-  * )
+ *     name="Paiements",
+ *     description="API pour les paiements vers les clients ou distributeurs"
+ * )
  */
 
 class TransactionPayementControlle extends Controller
 {
+    use     ApiResponse;
     protected $payementService;
     public  function __construct(TransactionPayementService $payementService)
     {
@@ -75,32 +76,30 @@ class TransactionPayementControlle extends Controller
      * )
      */
 
-public function paiement(Request $request)
-{
-    $validated = $request->validate([
-        'recipient' => 'required|string',
-        'type' => 'required|in:telephone,code_marchand',
-        'montant' => 'required|numeric|min:1',
-    ]);
-
-    $compte = auth()->user()->compte;
-    $this->authorize('pay', $compte);
-
-    $data = $this->payementService->payAndGetDetails(
-        $compte,
-        $validated['recipient'],
-        $validated['montant'],
-        $validated['type']
-    );
- var_dump($data);
-    return (new TransactionResource($data['transaction']))
-        ->additional([
-            'client' => $data['client'],
-            'destinataire' => $data['destinataire'],
-            'solde_avant' => $data['solde_avant'],
-            'solde_apres' => $data['solde_apres'],
+    public function paiement(Request $request)
+    {
+        $validated = $request->validate([
+            'recipient' => 'required|string',
+            'type' => 'required|in:telephone,code_marchand',
+            'montant' => 'required|numeric|min:1',
         ]);
-}
 
+        $compte = auth()->user()->compte;
+        $this->authorize('pay', $compte);
 
+        $data = $this->payementService->payAndGetDetails(
+            $compte,
+            $validated['recipient'],
+            $validated['montant'],
+            $validated['type']
+        );
+        $transaction = (new TransactionResource($data['transaction']))
+            ->additional([
+                'client' => $data['client'],
+                'destinataire' => $data['destinataire'],
+                'solde_avant' => $data['solde_avant'],
+                'solde_apres' => $data['solde_apres'],
+            ]);
+        return  $this->successResponse('Transfert effectué avec succès', $transaction, 200);
+    }
 }

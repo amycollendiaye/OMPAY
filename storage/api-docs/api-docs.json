@@ -418,6 +418,144 @@
                 }
             }
         },
+        "/api/v1/transactions": {
+            "get": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Lister les transactions du client",
+                "description": "Permet à un client de lister ses transactions avec pagination et filtrage",
+                "operationId": "9115b43a55e6c92c81e6c62926e4034f",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filtrer par type de transaction (transfert, paiement)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "date_debut",
+                        "in": "query",
+                        "description": "Date de début (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "date_fin",
+                        "in": "query",
+                        "description": "Date de fin (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Nombre d'éléments par page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des transactions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Liste paginée récupérée avec succès"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/TransactionResource"
+                                            }
+                                        },
+                                        "metadonnees": {
+                                            "properties": {
+                                                "date_creation": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "from": {
+                                                    "type": "integer"
+                                                },
+                                                "to": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string"
+                                                },
+                                                "last": {
+                                                    "type": "string"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non autorisé"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/transactions/pay": {
             "post": {
                 "tags": [
@@ -500,9 +638,102 @@
                     }
                 ]
             }
+        },
+        "/api/v1/transactions/transfer": {
+            "post": {
+                "tags": [
+                    "Transferts"
+                ],
+                "summary": "Effectuer un transfert",
+                "description": "Permet à un client d'effectuer un transfert vers un autre client ou distributeur en utilisant le numéro de téléphone",
+                "operationId": "c3e29885b6920f7987c0afe4ce38a76a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "destinataire_telephone",
+                                    "montant"
+                                ],
+                                "properties": {
+                                    "destinataire_telephone": {
+                                        "description": "Numéro de téléphone du destinataire",
+                                        "type": "string"
+                                    },
+                                    "montant": {
+                                        "description": "Montant du transfert",
+                                        "type": "number",
+                                        "format": "float",
+                                        "minimum": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transfert effectué avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transfert effectué avec succès"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/TransactionResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non autorisé"
+                    },
+                    "403": {
+                        "description": "Solde insuffisant"
+                    },
+                    "404": {
+                        "description": "Destinataire introuvable",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "Erreur: Aucun destinataire trouvé avec le numéro '771234567'."
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
+        "schemas": {
+            "TransactionResource": {
+                "title": "TransactionResource",
+                "description": "Ressource représentant une transaction",
+                "type": "object"
+            }
+        },
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
@@ -517,12 +748,20 @@
             "description": "API pour les paiements vers les clients ou distributeurs"
         },
         {
+            "name": "Transferts",
+            "description": "API pour les transferts entre comptes"
+        },
+        {
             "name": "Authentification",
             "description": "Authentification"
         },
         {
             "name": "Comptes",
             "description": "Comptes"
+        },
+        {
+            "name": "Transactions",
+            "description": "Transactions"
         }
     ]
 }

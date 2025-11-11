@@ -22,7 +22,7 @@ class DestinataireCompte
         };
     }
 
-    private function resolveByTelephone(string $telephone)
+    public function resolveByTelephone(string $telephone)
     {
         $client = Client::where('telephone', $telephone)->first();
         if ($client?->compte) {

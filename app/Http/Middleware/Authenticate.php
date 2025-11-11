@@ -20,7 +20,7 @@ class Authenticate extends Middleware
     protected function unauthenticated($request, array $guards)
     {
         if ($request->expectsJson() || $request->is('api/*')) {
-            throw new AuthenticationException('Unauthenticated.', $guards);
+            throw new AuthenticationException('ACCESS NON AUTORISE.', $guards);
         }
 
         throw new AuthenticationException('Unauthenticated.', $guards, $this->redirectTo($request));

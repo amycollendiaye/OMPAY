@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompteController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionPayementControlle;
 use App\Http\Controllers\TransactionTransfertController;
 use Illuminate\Http\Request;
@@ -31,10 +32,10 @@ Route::middleware('auth:api')->get('/profile', [AuthController::class, 'profile'
 Route::post("/comptes",[CompteController::class,'store']);
 Route::middleware('auth:api')->group(function () {
     // Liste des transactions du client connecté
-    // Route::get('transactions', [TransactionController::class, 'index']);
+    Route::get('transactions', [TransactionController::class, 'index']);
 
     // Transfert entre comptes
-    Route::post('transactions/transfer', [TransactionTransfertController::class, 'transfer']);
+    Route::post('transactions/transfer', [TransactionTransfertController::class, 'transfert']);
 
     // Paiement vers un client ou distributeur
     Route::post('transactions/pay', [TransactionPayementControlle::class, 'paiement']);
