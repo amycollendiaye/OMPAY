@@ -20,7 +20,8 @@ return new class extends Migration
             $table->boolean("plafond")->default(true);
             $table->uuid('client_id')->nullable();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
-            $table->index(["numero_compte", "type", "statut", "date_creation", "plafond", "client_id"]);
+            $table->uuid('distributeur_id')->nullable();
+            $table->index(["numero_compte", "type", "statut", "date_creation", "plafond", "client_id", "distributeur_id"]);
             $table->timestamps();
         });
     }

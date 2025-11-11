@@ -13,6 +13,6 @@ class CompteSeeder extends Seeder
      */
     public function run(): void
     {
-        Compte::factory(10)->create();
+        Compte::factory(5)->create();
     }
 }

@@ -19,13 +19,15 @@ class ClientFactory extends Factory
     {
         return [
             'id' => (string) Str::uuid(),
-            "nom"=>fake()->name(),
-            "prenom"=>fake()->lastName(),
-            'telephone' => $this->faker->phoneNumber(),
+            "nom" => fake()->name(),
+            "prenom" => fake()->lastName(),
+            'telephone' => $this->faker->numerify(
+                $this->faker->randomElement(['78#######', '77#######', '76#######', '79#######'])
+            ) ,
             'adresse' => $this->faker->address(),
             'cni' => strtoupper(Str::random(10)),
-            "code_secret"=>1611,
-            
+            "code_secret" => 1611,
+
 
         ];
     }

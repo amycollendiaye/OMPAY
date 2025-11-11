@@ -7,11 +7,188 @@
     },
     "servers": [
         {
-            "url": "https://amycolle-ompay.onrender.com",
+            "url": "http://127.0.0.1:8000",
             "description": "Serveur de production"
         }
     ],
     "paths": {
+        "/api/v1/auth": {
+            "post": {
+                "tags": [
+                    "Authentification"
+                ],
+                "summary": "Authentification d'un client",
+                "description": "Authentifie un client en utilisant uniquement son numéro de téléphone",
+                "operationId": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "telephone"
+                                ],
+                                "properties": {
+                                    "telephone": {
+                                        "description": "Numéro de téléphone du client",
+                                        "type": "string",
+                                        "example": "781030848"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Authentification réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "description": "Token d'accès",
+                                            "type": "string",
+                                            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID du client",
+                                                    "type": "string",
+                                                    "example": "uuid"
+                                                },
+                                                "nom": {
+                                                    "description": "Nom du client",
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "prenom": {
+                                                    "description": "Prénom du client",
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "telephone": {
+                                                    "description": "Téléphone",
+                                                    "type": "string",
+                                                    "example": "771234567"
+                                                },
+                                                "cni": {
+                                                    "description": "CNI",
+                                                    "type": "string",
+                                                    "example": "1234567890123"
+                                                },
+                                                "adresse": {
+                                                    "description": "Adresse",
+                                                    "type": "string",
+                                                    "example": "123 Main St"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentification échouée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erreur de validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "telephone": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Le téléphone est obligatoire."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/logout": {
+            "post": {
+                "tags": [
+                    "Authentification"
+                ],
+                "summary": "Déconnexion",
+                "description": "Révoque le token d'accès actuel",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "Déconnexion réussie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/comptes": {
             "post": {
                 "tags": [
@@ -240,9 +417,109 @@
                     }
                 }
             }
+        },
+        "/api/v1/transactions/pay": {
+            "post": {
+                "tags": [
+                    "Paiements"
+                ],
+                "summary": "Effectuer un paiement",
+                "description": "Permet à un client d'effectuer un paiement vers un autre client (via numéro de téléphone) ou vers un distributeur (via numéro de téléphone ou code marchand)",
+                "operationId": "16f3d755bd31888ae26d626a0e08a214",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "recipient",
+                                    "type",
+                                    "montant"
+                                ],
+                                "properties": {
+                                    "recipient": {
+                                        "description": "Numéro de téléphone ou code marchand du destinataire",
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "description": "Type de destinataire",
+                                        "type": "string",
+                                        "enum": [
+                                            "telephone",
+                                            "code_marchand"
+                                        ]
+                                    },
+                                    "montant": {
+                                        "description": "Montant du paiement",
+                                        "type": "number",
+                                        "format": "float",
+                                        "minimum": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Paiement effectué avec succès",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "Client: John Doe\\nSolde avant: 10000 FCFA\\nDistributeur: Simonis LLC (Code: 19823394)\\nPaiement réussi!\\nSolde après: 9500 FCFA\\nTransaction créée:\\n- ID: uuid-transaction\\n- Type: paiement\\n- Montant: 500.00\\n- Code marchand: 19823394\\n- Émetteur: uuid-emetteur\\n- Bénéficiaire: uuid-beneficiaire"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non autorisé"
+                    },
+                    "422": {
+                        "description": "Erreur de validation"
+                    },
+                    "403": {
+                        "description": "Solde insuffisant"
+                    },
+                    "404": {
+                        "description": "Destinataire introuvable",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string",
+                                    "example": "Erreur: Code marchand '123456' introuvable."
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
         }
     },
     "tags": [
+        {
+            "name": "Paiements",
+            "description": "API pour les paiements vers les clients ou distributeurs"
+        },
+        {
+            "name": "Authentification",
+            "description": "Authentification"
+        },
         {
             "name": "Comptes",
             "description": "Comptes"

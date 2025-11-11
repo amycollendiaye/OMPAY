@@ -18,8 +18,15 @@ use PhpParser\Node\Stmt\Return_;
  * )
  *
  * @OA\Server(
- *     url="https://amycolle-ompay.onrender.com",
+ *     url="http://127.0.0.1:8000",
  *     description="Serveur de production"
+ * )
+ *
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
  * )
  */
 class CompteController extends Controller

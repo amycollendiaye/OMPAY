@@ -12,26 +12,18 @@ class Transaction extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $_Fillable = [
+    protected $fillable = [
         'type',
         "montant",
         "date_transaction",
         "numero_reference",
         'code_marchand',
         "compte_emetteur_id",
-        "compte_beneficiare_id",
+        "compte_beneficiaire_id",
 
     ];
-    protected static function boot()
-    {
-        parent::boot();
 
-        static::creating(function ($transaction) {
-            if (empty($transaction->id)) {
-                $transaction->id = (string) Str::uuid();
-            }
-        });
-    }
+
     public function compteEmetteur()
     {
         return $this->belongsTo(Compte::class, 'compte_emetteur_id');

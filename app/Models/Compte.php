@@ -15,7 +15,8 @@ class Compte extends Model
         "statut",
         "date_creation",
         "plafond",
-        "client_id"
+        "client_id",
+        "distributeur_id"
     ];
     public $incrementing = false;
 
@@ -27,12 +28,41 @@ class Compte extends Model
     {
         return  $this->belongsTo(Client::class, "client_id");
     }
+
+    public function distributeur()
+    {
+        return $this->belongsTo(Distributeur::class, 'distributeur_id');
+    }
+
     public function  transactionEmises()
     {
-        return $this->hasMany(Compte::class, 'compte_emetteur_id');
+        return $this->hasMany(Transaction::class, 'compte_emetteur_id');
     }
     public function  transactionrecus()
     {
-        return $this->hasMany(Compte::class, 'compte_beneficiare_id');
+        return $this->hasMany(Transaction::class, 'compte_beneficiaire_id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'compte_emetteur_id')
+            ->orWhere('compte_beneficiaire_id', $this->id);
+    }
+
+    public function getSoldeAttribute()
+    {
+        $initial = 10000;
+
+        // Débits : sommes des transactions où ce compte est émetteur
+        $totalDebit = $this->transactionEmises()
+            ->whereIn('type', ['paiement', 'transfert'])
+            ->sum('montant');
+
+        // Crédits : sommes des transactions où ce compte est bénéficiaire
+        $totalCredit = $this->transactionrecus()
+            ->whereIn('type', ['paiement', 'transfert'])
+            ->sum('montant');
+
+        return $initial - $totalDebit + $totalCredit;
     }
 }

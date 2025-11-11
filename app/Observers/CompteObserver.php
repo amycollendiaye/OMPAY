@@ -12,7 +12,7 @@ class CompteObserver
      * Handle the Compte "created" event.
      */
 
-        public function  creating(Compte $compte)
+    public function  creating(Compte $compte)
     {
         if (empty($compte->id)) {
             $compte->id = (string)Str::uuid();
@@ -28,13 +28,14 @@ class CompteObserver
             $compte->numero_compte = $numero;
         }
     }
-   public function created(Compte $compte): void
-{
-    $client = $compte->client;
-    
-   
-    event(new CreateCompte($compte, $client));
-}
+    public function created(Compte $compte): void
+    {
+        $client = $compte->client;
+
+        if ($client) {
+            event(new CreateCompte($compte, $client));
+        }
+    }
 
     /**
      * Handle the Compte "updated" event.
