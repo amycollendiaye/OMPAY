@@ -18,7 +18,7 @@ use PhpParser\Node\Stmt\Return_;
  * )
  *
  * @OA\Server(
- *     url="http://127.0.0.1:8000",
+ *     url="https://amycolle-ompay.onrender.com",
  *     description="Serveur de production"
  * )
  *
