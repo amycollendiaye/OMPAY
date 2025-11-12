@@ -20,6 +20,7 @@ class Transaction extends Model
         'code_marchand',
         "compte_emetteur_id",
         "compte_beneficiaire_id",
+        "archive"
 
     ];
 

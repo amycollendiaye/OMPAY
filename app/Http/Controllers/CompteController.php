@@ -19,7 +19,7 @@ use PhpParser\Node\Stmt\Return_;
  * )
  *
  * @OA\Server(
- *     url="https://amycolle-ompay.onrender.com",
+ *     url="http://localhost:8000",
  *     description="Serveur de production"
  * )
  *
@@ -42,6 +42,8 @@ class CompteController extends Controller
     {
         $this->serviceCompte = $serviceCompte;
     }
+    // ArchiveTransactionsJob::dispatch();
+
 
     /**
      * @OA\Post(
