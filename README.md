@@ -146,3 +146,6 @@ p hp artisan schedule:work permet de faire tourner le planificateur Laravel (sch
 php artisan make:command RunArchiveJob
  creeer la commande artisan   pour cela dans le dossier app 
 
+ ## pour executer les commande de job sans woker
+
+API REST FULL

@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->job(new ArchiveOldTransactionJob)->dailyAt('14:11');
+        $schedule->job(new ArchiveOldTransactionJob)->dailyAt('00:00');
     }
 
 

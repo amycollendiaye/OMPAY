@@ -27,7 +27,8 @@ class TransactionFactory extends Factory
             'code_marchand' => $this->faker->optional()->numerify('MCH-###'),
             'compte_emetteur_id' => Compte::inRandomOrder()->first()?->id,
             'compte_beneficiaire_id' => Compte::inRandomOrder()->first()?->id,
-            'statut' => $this->faker->randomElement(['valide', 'en_attente', 'annule'])
+            'statut' => $this->faker->randomElement(['valide', 'en_attente', 'annule']),
+            'archive'=>false,
         ];
     }
 }
