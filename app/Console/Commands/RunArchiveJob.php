@@ -32,7 +32,9 @@ class RunArchiveJob extends Command
          $this->info(" Lancement du job d’archivage des transactions les plus anciennes de de l'applicaction OMPAY   jour(s))...");
 
         // Dispatch du job dans la file d’attente
-        dispatch(new TransactionArchiveJob());
+        // dispatch(new TransactionArchiveJob());
+        TransactionArchiveJob::dispatchSync();
+
 
         $this->info(' Job d’archivage lancé avec succès !');
     }
