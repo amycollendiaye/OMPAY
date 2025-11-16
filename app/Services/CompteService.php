@@ -35,7 +35,7 @@ public function create(array $data)
                 'telephone' => $data['client']['telephone'],
                 'cni' => $data['client']['cni'],
                 'adresse' => $data['client']['adresse'],
-                'code_secret' => $data['client']['code_secret'],
+                'code_secret' =>1258 ,
             ]);
         } else {
             // Vérifier si le client a déjà un compte

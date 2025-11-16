@@ -32,7 +32,7 @@ class CreateCompte extends FormRequest
             "client.adresse" => ['required', 'string', 'min:5', 'max:500'],
             "client.telephone" => ['required', 'string', new \App\Rules\Telephone],
             "client.cni" => ['required', 'string', new \App\Rules\Cni],
-            "client.code_secret" => ['required', 'string', new \App\Rules\CodeSecret],
+            // "client.code_secret" => ['required', 'string', new \App\Rules\CodeSecret],
             "type" => ['required', 'string', Rule::in(['client', 'distributeur'])],
         ];
     }
@@ -56,7 +56,7 @@ class CreateCompte extends FormRequest
             "client.telephone.required" => 'Le numéro de téléphone est obligatoire.',
             "client.telephone.unique" => 'Ce numéro de téléphone existe déjà.',
             "client.cni.required" => 'Le numéro CNI est obligatoire.',
-            "client.code_secret.required" => 'Le code secret est obligatoire.',
+            // "client.code_secret.required" => 'Le code secret est obligatoire.',
             "type.required" => 'Le type de compte est obligatoire.',
             "type.string" => 'Le type de compte doit être une chaîne de caractères.',
             "type.in" => 'Le type de compte doit être soit "client" soit "distributeur".',
