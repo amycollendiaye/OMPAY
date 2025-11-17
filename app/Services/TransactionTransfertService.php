@@ -20,7 +20,7 @@ class TransactionTransfertService {
             'montant' => $montant,
             'date_transaction' => now()->toDateString(),
             'numero_reference' => 'TXN-' . rand(100000, 999999),
-            'statut' => 'en_attente'
+            'statut' => 'valide'
         ]);
     }
 }

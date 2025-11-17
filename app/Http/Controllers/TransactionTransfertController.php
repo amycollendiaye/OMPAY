@@ -82,16 +82,19 @@ class TransactionTransfertController extends Controller
      * )
      */
      public function transfert(Request $request)
-    {
-        $validated = $request->validate([
-            'destinataire_telephone' => 'required|string',
-            'montant' => 'required|numeric|min:1',
-        ]);
+     {
+         $validated = $request->validate([
+             'destinataire_telephone' => 'required|string',
+             'montant' => 'required|numeric|min:1',
+         ]);
 
-        $emetteur = auth()->user()->compte;
-        $this->authorize('transfer', $emetteur);
+         $emetteur = auth()->user()->compte;
+         $this->authorize('transfer', $emetteur);
 
-        $destinataireCompte = $this->destinataireService->resolveByTelephone($validated['destinataire_telephone']);
+         // Déterminer le type basé sur le destinataire
+         $type = (str_starts_with($validated['destinataire_telephone'], '7') || str_starts_with($validated['destinataire_telephone'], '8')) ? 'telephone' : 'code_marchand';
+
+         $destinataireCompte = $this->destinataireService->resolveRecipient($validated['destinataire_telephone'], $type);
 
         if ($emetteur->id === $destinataireCompte->id) {
             throw ValidationException::withMessages([
@@ -105,7 +108,12 @@ class TransactionTransfertController extends Controller
             $validated['montant']
         );
 
-        $transaction = new TransactionResource($transaction);
+        $soldeApres = $emetteur->fresh()->solde;
+
+        $transaction = (new TransactionResource($transaction))
+            ->additional([
+                'solde_apres' => $soldeApres,
+            ]);
         return  $this->successResponse('Transfert effectué avec succès', $transaction, 200);
     }
 }

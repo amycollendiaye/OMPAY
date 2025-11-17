@@ -149,3 +149,6 @@ php artisan make:command RunArchiveJob
  ## pour executer les commande de job sans woker
 
 API REST FULL
+ php artisan tinker --execute="\$client = App\Models\Distributeur::where('telephone', '(641) 767-5154')->first(); if(\$client) { \$client->load('compte'); echo 'Solde: ' . \$client->compte->solde; } else { echo 'Client not found'; }"
+ ### LA LISTE DES DISTRIBUTEURS:
+ php artisan tinker --execute="dd(App\Models\Distributeur::all()->toArray());"

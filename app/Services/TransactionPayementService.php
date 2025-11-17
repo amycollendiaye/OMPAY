@@ -52,6 +52,7 @@ class TransactionPayementService
                 'type' => 'paiement',
                 'montant' => $montant,
                 'code_marchand' => $type === 'code_marchand' ? $recipient : null,
+                'statut' => 'valide',
             ]);
         });
     }

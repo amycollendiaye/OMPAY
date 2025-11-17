@@ -51,16 +51,20 @@ class Compte extends Model
 
     public function getSoldeAttribute()
     {
-        $initial = 10000;
+        $initial = 500000;
 
         // Débits : sommes des transactions où ce compte est émetteur
         $totalDebit = $this->transactionEmises()
             ->whereIn('type', ['paiement', 'transfert'])
+            ->where('statut', 'valide')
+            ->where('archive', false)
             ->sum('montant');
 
         // Crédits : sommes des transactions où ce compte est bénéficiaire
         $totalCredit = $this->transactionrecus()
             ->whereIn('type', ['paiement', 'transfert'])
+            ->where('statut', 'valide')
+            ->where('archive', false)
             ->sum('montant');
 
         return $initial - $totalDebit + $totalCredit;
