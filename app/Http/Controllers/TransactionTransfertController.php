@@ -48,14 +48,14 @@ class TransactionTransfertController extends Controller
      *         )
      *     ),
      *     @OA\Response(
-      *         response=200,
-      *         description="Transfert effectué avec succès",
-      *         @OA\JsonContent(
-      *             @OA\Property(property="success", type="boolean", example=true),
-      *             @OA\Property(property="message", type="string", example="Transfert effectué avec succès"),
-      *             @OA\Property(property="data", ref="#/components/schemas/TransactionResource")
-      *         )
-      *     ),
+     *         response=200,
+     *         description="Transfert effectué avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Transfert effectué avec succès"),
+     *             @OA\Property(property="data", ref="#/components/schemas/TransactionResource")
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=401,
      *         description="Non autorisé"
@@ -81,20 +81,20 @@ class TransactionTransfertController extends Controller
      *     )
      * )
      */
-     public function transfert(Request $request)
-     {
-         $validated = $request->validate([
-             'destinataire_telephone' => 'required|string',
-             'montant' => 'required|numeric|min:1',
-         ]);
+    public function transfert(Request $request)
+    {
+        $validated = $request->validate([
+            'destinataire_telephone' => 'required|string',
+            'montant' => 'required|numeric|min:1',
+        ]);
 
-         $emetteur = auth()->user()->compte;
-         $this->authorize('transfer', $emetteur);
+        $emetteur = auth()->user()->compte;
+        $this->authorize('transfer', $emetteur);
 
-         // Déterminer le type basé sur le destinataire
-         $type = (str_starts_with($validated['destinataire_telephone'], '7') || str_starts_with($validated['destinataire_telephone'], '8')) ? 'telephone' : 'code_marchand';
+        // Déterminer le type basé sur le destinataire
+        $type = (str_starts_with($validated['destinataire_telephone'], '7') || str_starts_with($validated['destinataire_telephone'], '8')) ? 'telephone' : 'code_marchand';
 
-         $destinataireCompte = $this->destinataireService->resolveRecipient($validated['destinataire_telephone'], $type);
+        $destinataireCompte = $this->destinataireService->resolveRecipient($validated['destinataire_telephone'], $type);
 
         if ($emetteur->id === $destinataireCompte->id) {
             throw ValidationException::withMessages([
@@ -117,4 +117,3 @@ class TransactionTransfertController extends Controller
         return  $this->successResponse('Transfert effectué avec succès', $transaction, 200);
     }
 }
-

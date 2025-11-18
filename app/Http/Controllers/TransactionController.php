@@ -92,6 +92,7 @@ class TransactionController extends Controller
             ->listTransactions($compte, $request->all())
             ->paginate($request->get('per_page', 2));
 
-        return $this->paginatedResponse($transactions, 'Liste des transactions récupérée avec succès');
-    }
+ $transactions = TransactionResource::collection($transactions);
+
+    return $this->paginatedResponse($transactions, 'Liste des transactions récupérée avec succès');    }
 }

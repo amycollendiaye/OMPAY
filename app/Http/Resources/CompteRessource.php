@@ -20,7 +20,7 @@ class CompteRessource extends JsonResource
             'telephone' => $this->client->telephone,
             'cni' => $this->client->cni,
             'type' => $this->type,
-            'solde' =>   0,
+            'solde' =>  $this->solde,
             'statut' => $this->statut,
 
             'devise' => 'FCFA',

@@ -33,7 +33,8 @@ trait ApiResponse
     }
     protected function  paginatedResponse($paginator, string $message = 'Liste paginée récupérée avec succès'): JsonResponse
     {
-        $paginatorArray = $paginator->toArray();
+        $paginatorArray = $paginator->resource->toArray();
+        $paginatorArray['data'] = $paginator->toArray(request());
 
         $metadonne = [
             'date_creation' => now()->toIso8601String(),
