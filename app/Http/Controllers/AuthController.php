@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Transaction;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -150,10 +152,23 @@ class AuthController extends Controller
      */
    public function me(Request $request)
 {
-    $user = $request->user();
-    $user->load(['compte.transactions']); // Charge le compte et ses transactions
+   $user = $request->user();
+   $user->load('compte'); // Charge le compte
 
-    $compte = $user->compte;
+   $compte = $user->compte;
+
+   // Charger les transactions manuellement
+   $transactions = $compte ? Transaction::where('compte_emetteur_id', $compte->id)
+       ->orWhere('compte_beneficiaire_id', $compte->id)
+       ->where('archive', false) // Exclure les archivées, comme dans le solde
+       ->get() : collect();
+
+   // Logs pour diagnostiquer
+   Log::info('Compte ID: ' . ($compte ? $compte->id : 'null'));
+   Log::info('Transactions count: ' . $transactions->count());
+   if ($transactions->count() > 0) {
+       Log::info('Transaction IDs: ' . $transactions->pluck('id')->join(', '));
+   }
 
     return response()->json([
         'status' => 'success',
@@ -176,7 +191,7 @@ class AuthController extends Controller
             ] : null,
 
             // Infos des transactions associées
-            'transactions' => $compte ? $compte->transactions->map(function ($t) {
+            'transactions' => $transactions->map(function ($t) {
                 return [
                     'id' => $t->id,
                     'type' => $t->type,
@@ -184,7 +199,7 @@ class AuthController extends Controller
                     'type' => $t->type,
                     'referennce' => $t->numero_reference,
                 ];
-            }) : [],
+            }),
         ]
     ]);
 }
