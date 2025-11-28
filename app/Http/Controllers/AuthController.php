@@ -74,7 +74,7 @@ class AuthController extends Controller
         $client = Client::where('telephone', $request->telephone)->first();
 
         if (!$client) {
-            return $this->errorResponse("desole  mais vous n'est pas autorisé!!!!", 401);
+            return $this->errorResponse("desole   le numero existe pas !!!!", 401);
         }
 
         $accessToken = $client->createToken('access_token', ['access'])->accessToken;
